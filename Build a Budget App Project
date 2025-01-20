@@ -1,0 +1,79 @@
+class Category:
+    def __init__(self, name):
+        """Initialize a category with a name and an empty ledger."""
+        self.name = name
+        self.ledger = []
+        
+    def deposit(self, amount, description=""):
+        """Deposit money into the category."""
+        self.ledger.append({'amount': amount, 'description': description})
+    
+    def withdraw(self, amount, description=""):
+        """Withdraw money from the category if there are sufficient funds."""
+        if self.check_funds(amount):
+            self.ledger.append({'amount': -amount, 'description': description})
+            return True
+        return False
+    
+    def get_balance(self):
+        """Return the current balance of the category by summing all ledger entries."""
+        return sum(item['amount'] for item in self.ledger)
+    
+    def transfer(self, amount, category):
+        """Transfer money from one category to another if there are sufficient funds."""
+        if self.check_funds(amount):
+            self.withdraw(amount, f"Transfer to {category.name}")
+            category.deposit(amount, f"Transfer from {self.name}")
+            return True
+        return False
+    
+    def check_funds(self, amount):
+        """Check if there are sufficient funds for a withdrawal or transfer."""
+        return self.get_balance() >= amount
+    
+    def __str__(self):
+        """Return a formatted string representation of the category's ledger and balance."""
+        title = f"{self.name:*^30}"  # Title centered with asterisks
+        items = [f"{item['description'][:23]:<23}{item['amount']:>7.2f}" for item in self.ledger]
+        total = f"Total: {self.get_balance():.2f}"  # Total balance
+        return '\n'.join([title] + items + [total])
+
+
+def create_spend_chart(categories):
+  spent_dict = {}
+  for i in categories:
+    s = 0 
+    for j in i.ledger:
+      if j['amount'] < 0 :
+        s+= abs(j['amount'])
+    spent_dict[i.name] = round(s,2)
+  total = sum(spent_dict.values())
+  percent_dict = {}
+  for k in spent_dict.keys():
+    percent_dict[k] = int(round(spent_dict[k]/total,2)*100)
+  output = 'Percentage spent by category\n'
+  for i in range(100,-10,-10):
+    output += f'{i}'.rjust(3) + '| '
+    for percent in percent_dict.values():
+      if percent >= i:
+        output+= 'o  '
+      else:
+        output+= '   '
+    output += '\n' 
+  output += ' '*4+'-'*(len(percent_dict.values())*3+1)
+  output += '\n     '
+  dict_key_list = list(percent_dict.keys())
+  max_len_category = max([len(i) for i in dict_key_list])
+  
+  for i in range(max_len_category):
+    
+    for name in dict_key_list:
+      if len(name)>i:
+        output+= name[i] +'  '
+      else:
+        output+= '   '
+    if i < max_len_category-1:
+      output+='\n     '
+    
+  return output
+
