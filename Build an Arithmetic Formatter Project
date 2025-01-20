@@ -1,0 +1,54 @@
+def arithmetic_arranger(problems, show_answers=False):
+    # Check if the number of problems exceeds 5
+    if len(problems) > 5:
+        return "Error: Too many problems."
+    
+    top_row = []
+    bottom_row = []
+    dashes_row = []
+    result_row = []
+    
+    for problem in problems:
+        # Split the problem into operands and operator
+        operands = problem.split()
+        num1 = operands[0]
+        operator = operands[1]
+        num2 = operands[2]
+        
+        # Check if the operator is valid
+        if operator not in ['+', '-']:
+            return "Error: Operator must be '+' or '-'."
+        
+        # Check if both numbers are valid
+        if not num1.isdigit() or not num2.isdigit():
+            return "Error: Numbers must only contain digits."
+        
+        # Check if the numbers do not exceed four digits
+        if len(num1) > 4 or len(num2) > 4:
+            return "Error: Numbers cannot be more than four digits."
+        
+        # Calculate the result if needed
+        if show_answers:
+            if operator == '+':
+                result = str(int(num1) + int(num2))
+            elif operator == '-':
+                result = str(int(num1) - int(num2))
+        else:
+            result = ""
+        
+        # Find the width of the largest number for alignment
+        width = max(len(num1), len(num2)) + 2  # Including the operator space
+        
+        # Align numbers to the right
+        top_row.append(num1.rjust(width))
+        bottom_row.append(operator + ' ' + num2.rjust(width - 2))  # Account for operator space
+        dashes_row.append('-' * width)
+        result_row.append(result.rjust(width))
+    
+    # Join the rows with four spaces in between
+    arranged_problems = '    '.join(top_row) + '\n' + '    '.join(bottom_row) + '\n' + '    '.join(dashes_row)
+    
+    if show_answers:
+        arranged_problems += '\n' + '    '.join(result_row)
+    
+    return arranged_problems
