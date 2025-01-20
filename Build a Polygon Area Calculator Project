@@ -1,0 +1,65 @@
+class Rectangle:
+    def __init__(self, width, height):
+        """Initialize a rectangle with width and height."""
+        self.width = width
+        self.height = height
+    
+    def set_width(self, width):
+        """Set the width of the rectangle."""
+        self.width = width
+    
+    def set_height(self, height):
+        """Set the height of the rectangle."""
+        self.height = height
+    
+    def get_area(self):
+        """Return the area of the rectangle."""
+        return self.width * self.height
+    
+    def get_perimeter(self):
+        """Return the perimeter of the rectangle."""
+        return 2 * self.width + 2 * self.height
+    
+    def get_diagonal(self):
+        """Return the diagonal of the rectangle."""
+        return (self.width**2 + self.height**2) ** 0.5
+    
+    def get_picture(self):
+        """Return a string representation of the rectangle."""
+        if self.width > 50 or self.height > 50:
+            return "Too big for picture."
+        return "\n".join(["*" * self.width] * self.height) + "\n"
+    
+    def get_amount_inside(self, shape):
+        """Return the number of times the passed shape can fit inside the rectangle."""
+        if isinstance(shape, Rectangle):
+            return (self.width // shape.width) * (self.height // shape.height)
+        elif isinstance(shape, Square):
+            return (self.width // shape.width) * (self.height // shape.width)
+    
+    def __str__(self):
+        """Return a string representation of the rectangle."""
+        return f"Rectangle(width={self.width}, height={self.height})"
+
+
+class Square(Rectangle):
+    def __init__(self, side):
+        """Initialize a square by setting both width and height to side length."""
+        super().__init__(side, side)  # Call the Rectangle's __init__ method
+    
+    def set_side(self, side):
+        """Set the side length of the square and adjust width and height."""
+        self.width = side
+        self.height = side
+    
+    def set_width(self, width):
+        """Override set_width to ensure width and height remain the same."""
+        self.set_side(width)  # Setting the width also sets the height to the same value
+    
+    def set_height(self, height):
+        """Override set_height to ensure width and height remain the same."""
+        self.set_side(height)  # Setting the height also sets the width to the same value
+    
+    def __str__(self):
+        """Return a string representation of the square."""
+        return f"Square(side={self.width})"
