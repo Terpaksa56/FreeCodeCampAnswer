@@ -1,0 +1,40 @@
+import random
+
+class Hat:
+    def __init__(self, **ball_colors):
+        """Initialize the hat with balls of different colors."""
+        self.contents = []
+        for color, count in ball_colors.items():
+            self.contents.extend([color] * count)  # Add the specified number of balls of each color
+    
+    def draw(self, num_balls):
+        """Draw a specified number of balls randomly from the hat."""
+        drawn_balls = random.sample(self.contents, k=min(num_balls, len(self.contents)))
+        for ball in drawn_balls:
+            self.contents.remove(ball)  # Remove the drawn balls from the hat
+        return drawn_balls
+
+def experiment(hat, expected_balls, num_balls_drawn, num_experiments):
+    """Run the experiment to estimate the probability of drawing a specified number of balls."""
+    success_count = 0
+    
+    for _ in range(num_experiments):
+        # Create a fresh copy of the hat for each experiment
+        experiment_hat = Hat(**{color: hat.contents.count(color) for color in hat.contents})
+        drawn_balls = experiment_hat.draw(num_balls_drawn)
+        
+        # Count the occurrence of each ball color in the drawn balls
+        drawn_counts = {color: drawn_balls.count(color) for color in drawn_balls}
+        
+        # Check if the drawn balls meet the expected balls criteria
+        success = True
+        for color, count in expected_balls.items():
+            if drawn_counts.get(color, 0) < count:
+                success = False
+                break
+        
+        if success:
+            success_count += 1
+    
+    # Return the estimated probability
+    return success_count / num_experiments
