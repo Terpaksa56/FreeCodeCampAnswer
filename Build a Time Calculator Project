@@ -1,0 +1,75 @@
+def add_time(start, duration, day=None):
+    # Define days of the week for reference
+    days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    
+    # Convert start time to 24-hour format
+    start_time, period = start.split()  # Extract time and period (AM/PM)
+    start_hour, start_minute = map(int, start_time.split(':'))  # Split time into hour and minute
+    
+    if period == "PM" and start_hour != 12:
+        start_hour += 12  # Convert PM to 24-hour format
+    elif period == "AM" and start_hour == 12:
+        start_hour = 0  # Convert 12 AM to 00:00
+    
+    # Convert duration to hours and minutes
+    duration_hour, duration_minute = map(int, duration.split(':'))
+    
+    # Add duration to start time
+    total_minutes = start_hour * 60 + start_minute + duration_hour * 60 + duration_minute
+    
+    # Calculate the new time in 24-hour format
+    final_hour = (total_minutes // 60) % 24  # Use modulus to wrap around 24-hour format
+    final_minute = total_minutes % 60
+    
+    # Determine the number of days later
+    days_later = total_minutes // (60 * 24)
+    
+    # Convert back to 12-hour format
+    if final_hour == 0:
+        final_period = "AM"
+        final_hour = 12
+    elif final_hour == 12:
+        final_period = "PM"
+    elif final_hour > 12:
+        final_period = "PM"
+        final_hour -= 12
+    else:
+        final_period = "AM"
+    
+    # Format the final time
+    final_time = f"{final_hour}:{final_minute:02d} {final_period}"
+    
+    # Handle day of the week if provided
+    if day:
+        day = day.strip().capitalize()  # Ensure correct capitalization
+        if day in days_of_week:
+            day_index = days_of_week.index(day)
+            final_day = days_of_week[(day_index + days_later) % 7]
+            final_time = f"{final_time}, {final_day}"
+    
+    # Handle days later part
+    if days_later == 1:
+        final_time += " (next day)"
+    elif days_later > 1:
+        final_time += f" ({days_later} days later)"
+    
+    return final_time
+
+
+add_time('3:00 PM', '3:10')
+# Returns: 6:10 PM
+
+add_time('11:30 AM', '2:32', 'Monday')
+# Returns: 2:02 PM, Monday
+
+add_time('11:43 AM', '00:20')
+# Returns: 12:03 PM
+
+add_time('10:10 PM', '3:30')
+# Returns: 1:40 AM (next day)
+
+add_time('11:43 PM', '24:20', 'tueSday')
+# Returns: 12:03 AM, Thursday (2 days later)
+
+add_time('6:30 PM', '205:12')
+# Returns: 7:42 AM (9 days later)
